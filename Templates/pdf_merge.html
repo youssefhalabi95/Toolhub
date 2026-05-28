@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>PDF Merger Pro</title>
+
+    <style>
+
+        body {
+            font-family: Arial;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            width: 60%;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .upload-box {
+            border: 2px dashed #999;
+            padding: 30px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            background: #fafafa;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #eeeeee;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+        }
+
+        .buttons button {
+            margin-left: 5px;
+        }
+
+        .merge-btn {
+            margin-top: 20px;
+            padding: 12px 25px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background-color: #2d6cdf;
+            color: white;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>📄 PDF Merger Pro</h1>
+
+        <p>Select and reorder your PDF files before merging.</p>
+
+        <form
+            id="pdfForm"
+            action="/merge-pdf"
+            method="POST"
+            enctype="multipart/form-data"
+        >
+
+            <div class="upload-box">
+
+                <input
+                    type="file"
+                    id="pdfInput"
+                    accept=".pdf"
+                    multiple
+                >
+
+            </div>
+
+            <div id="fileList"></div>
+
+            <button
+                type="submit"
+                class="merge-btn"
+            >
+                Merge PDFs
+            </button>
+
+        </form>
+
+    </div>
+
+    <script>
+
+        const pdfInput = document.getElementById("pdfInput");
+        const fileList = document.getElementById("fileList");
+        const form = document.getElementById("pdfForm");
+
+        let filesArray = [];
+
+        // -----------------------------
+        // FILE SELECTION
+        // -----------------------------
+
+        pdfInput.addEventListener("change", (event) => {
+
+            filesArray = Array.from(event.target.files);
+
+            renderFiles();
+
+        });
+
+        // -----------------------------
+        // RENDER FILES
+        // -----------------------------
+
+        function renderFiles() {
+
+            fileList.innerHTML = "";
+
+            filesArray.forEach((file, index) => {
+
+                const div = document.createElement("div");
+
+                div.className = "file-item";
+
+                div.innerHTML = `
+                    <span>${file.name}</span>
+
+                    <div class="buttons">
+
+                        <button type="button"
+                            onclick="moveUp(${index})">
+                            ↑
+                        </button>
+
+                        <button type="button"
+                            onclick="moveDown(${index})">
+                            ↓
+                        </button>
+
+                        <button type="button"
+                            onclick="removeFile(${index})">
+                            Remove
+                        </button>
+
+                    </div>
+                `;
+
+                fileList.appendChild(div);
+
+            });
+
+        }
+
+        // -----------------------------
+        // MOVE FILE UP
+        // -----------------------------
+
+        function moveUp(index) {
+
+            if (index === 0) return;
+
+            [filesArray[index - 1], filesArray[index]] =
+            [filesArray[index], filesArray[index - 1]];
+
+            renderFiles();
+
+        }
+
+        // -----------------------------
+        // MOVE FILE DOWN
+        // -----------------------------
+
+        function moveDown(index) {
+
+            if (index === filesArray.length - 1) return;
+
+            [filesArray[index + 1], filesArray[index]] =
+            [filesArray[index], filesArray[index + 1]];
+
+            renderFiles();
+
+        }
+
+        // -----------------------------
+        // REMOVE FILE
+        // -----------------------------
+
+        function removeFile(index) {
+
+            filesArray.splice(index, 1);
+
+            renderFiles();
+
+        }
+
+        // -----------------------------
+        // SUBMIT FORM
+        // -----------------------------
+
+        form.addEventListener("submit", (event) => {
+
+            event.preventDefault();
+
+            const formData = new FormData();
+
+            filesArray.forEach((file) => {
+
+                formData.append("pdfs", file);
+
+            });
+
+            fetch("/merge-pdf", {
+
+                method: "POST",
+                body: formData
+
+            })
+            .then(response => response.blob())
+            .then(blob => {
+
+                const url = window.URL.createObjectURL(blob);
+
+                const a = document.createElement("a");
+
+                a.href = url;
+                a.download = "merged.pdf";
+
+                document.body.appendChild(a);
+
+                a.click();
+
+                a.remove();
+
+            });
+
+        });
+
+    </script>
+
+</body>
+
+</html>

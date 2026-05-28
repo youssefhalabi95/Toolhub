@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Tool Hub</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #555;
+            margin-bottom: 40px;
+        }
+
+        .tools-grid {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tool-card {
+            background: white;
+            width: 300px;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0px 0px 12px rgba(0,0,0,0.1);
+        }
+
+        .tool-card img {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .tool-card h2 {
+            color: #2c3e50;
+        }
+
+        .tool-card p {
+            font-size: 15px;
+            color: #666;
+        }
+
+        .tool-btn {
+            background-color: #2d6cdf;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .tool-btn:hover {
+            background-color: #1f4fa8;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Tool Hub</h1>
+
+        <p>
+            A collection of useful desktop automation tools built with Python.
+        </p>
+
+        <div class="tools-grid">
+
+            <!-- Excel Cleanup Tool -->
+
+            <div class="tool-card">
+
+                <h2>📊 Excel Cleanup Tool</h2>
+
+                <p>
+                    Clean Excel files automatically by removing duplicates,
+                    fixing dates, and highlighting issues.
+                </p>
+
+                <a href="/excel-cleanup" class="tool-btn">
+                    View Tool
+                </a>
+
+            </div>
+
+            <!-- PDF Merger Tool -->
+
+            <div class="tool-card">
+
+                <h2>📄 PDF Merger Tool</h2>
+
+                <p>
+                    Merge multiple PDF files into one document instantly.
+                </p>
+
+                <a href="/pdf-merge" class="tool-btn">
+                    View Tool
+                </a>
+
+            </div>
+
+            <!-- File Organizer Tool -->
+
+            <div class="tool-card">
+
+                <h2>📄 File Organizer Tool</h2>
+
+                <p>
+                    Divide files inside a selected folder into one images, videos and documents.
+                </p>
+
+                <a href="/file-organizer" class="tool-btn">
+                    View Tool
+                </a>
+
+            </div>
+
+            <div class="contact-section">
+
+                <h2>📩 Need a Custom Tool?</h2>
+
+                <p>
+                    Need a different automation tool or an upgraded version of an existing tool? Send me a message.
+                </p>
+
+                <form action="/contact" method="POST">
+
+                    <input
+                        type="text"
+                        name="name"
+                        placeholder="Your Name"
+                        required
+                        >
+
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="Your Email"
+                        required
+                        >
+
+                    <textarea
+                        name="message"
+                        placeholder="Describe the tool or feature you need..."
+                        rows="6"
+                        required
+                    ></textarea>
+
+                    <button type="submit">
+                        Send Request
+                    </button>
+
+            </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
