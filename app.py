@@ -10,6 +10,10 @@ OUTPUT_FOLDER = "outputs"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
+@app.route("/health")
+def health():
+    return "ToolHub is running"
+
 @app.route("/")
 def home():
     return render_template("home.html")
