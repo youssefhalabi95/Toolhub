@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>File Renamer</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family:Arial, sans-serif;
+            background:#f4f6f9;
+        }
+
+        .container{
+            max-width:900px;
+            margin:60px auto;
+            background:white;
+            padding:40px;
+            border-radius:15px;
+            box-shadow:0 5px 20px rgba(0,0,0,0.1);
+            text-align:center;
+        }
+
+        h1{
+            color:#2c3e50;
+            margin-bottom:15px;
+        }
+
+        p{
+            color:#666;
+            font-size:18px;
+            margin-bottom:30px;
+            line-height:1.6;
+        }
+
+        .upload-box{
+            border:2px dashed #2d6cdf;
+            padding:50px;
+            border-radius:10px;
+            margin-bottom:25px;
+            background:#fafcff;
+        }
+
+        input[type="file"]{
+            margin-top:15px;
+            font-size:16px;
+        }
+
+        .rename-btn{
+            background:#2d6cdf;
+            color:white;
+            border:none;
+            padding:15px 35px;
+            font-size:18px;
+            border-radius:8px;
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        .rename-btn:hover{
+            background:#1f4fa8;
+        }
+
+        .info{
+            margin-top:20px;
+            color:#777;
+            font-size:14px;
+        }
+
+    </style>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RP580F1963"></script>
+
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-RP580F1963');
+    </script>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>📂 File Renamer</h1>
+
+        <p>
+            Upload your files and instantly rename them to
+            file_1, file_2, file_3, etc.
+            Download the renamed files as a ZIP.
+        </p>
+
+        <form action="/file-renamer-tool" method="POST" enctype="multipart/form-data">
+
+            <div class="upload-box">
+
+                <h3>Select Files</h3>
+
+                <input
+                    type="file"
+                    name="files"
+                    multiple
+                    required
+                >
+
+            </div>
+
+            <button type="submit" class="rename-btn">
+                Rename Files
+            </button>
+
+        </form>
+
+        <div class="info">
+            Supported: Any file type • Files remain private • Instant processing
+        </div>
+
+    </div>
+
+</body>
+
+</html>

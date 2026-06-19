@@ -1,6 +1,10 @@
 from flask import Flask, render_template, request, send_file
 from PyPDF2 import PdfMerger
 import os
+import tkinter
+from tkinter import filedialog, messagebox
+from io import BytesIO
+from zipfile import ZipFile
 
 app = Flask(__name__)
 
@@ -69,6 +73,55 @@ def download_file_organizer ():
         "static/downloads/File_Organizer_2.zip",
         as_attachment=True
     )
+
+@app.route("/file-renamer")
+def rename_files_page ():
+
+    return render_template("File-Renamer.html")
+
+@app.route("/file-renamer-tool", methods=["POST"])
+def rename_files():
+
+    uploaded_files = request.files.getlist("files")
+
+    if not uploaded_files:
+        return "No files uploaded."
+
+    zip_buffer = BytesIO()
+
+    with ZipFile(zip_buffer, "w") as zip_file:
+
+        counter = 1
+
+        for file in uploaded_files:
+
+            # Skip empty selections
+            if file.filename == "":
+                continue
+
+            # Get original extension
+            _, extension = os.path.splitext(file.filename)
+
+            # New filename
+            new_name = f"file_{counter}{extension}"
+
+            # Read uploaded file content
+            file_content = file.read()
+
+            # Add renamed file to zip
+            zip_file.writestr(new_name, file_content)
+
+            counter += 1
+
+    zip_buffer.seek(0)
+
+    return send_file(
+        zip_buffer,
+        as_attachment=True,
+        download_name="renamed_files.zip",
+        mimetype="application/zip"
+    )
+
 
 @app.route("/contact", methods=["POST"])
 def contact():
