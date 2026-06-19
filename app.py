@@ -23,7 +23,7 @@ def health():
 
 @app.route("/")
 def home():
-    return "THIS IS APP.PY VERSION 1"
+    return render_template("home.html")
 
 @app.route("/pdf-merge")
 def pdf_merge_page():
@@ -141,10 +141,13 @@ def contact():
         f"**Message:**\n{message}"
     }
 
-    requests.post(
+    response = requests.post(
         DISCORD_WEBHOOK_URL,
         json=discord_message
     )
+
+    print("Discord status:", response.status_code)
+    print("Discord response:", response.text)
 
     return "Request received successfully!"
 
