@@ -5,8 +5,11 @@ import tkinter
 from tkinter import filedialog, messagebox
 from io import BytesIO
 from zipfile import ZipFile
+import requests
 
 app = Flask(__name__)
+
+DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1517342330967949353/kzoWHEp87BwFnGv1XO0HmmaSLHtKf4oI7Nu1-dqE0ZCG2J_FYI2qiDXtZ82ZwxeUQQiF"
 
 UPLOAD_FOLDER = "uploads"
 OUTPUT_FOLDER = "outputs"
@@ -20,7 +23,7 @@ def health():
 
 @app.route("/")
 def home():
-    return render_template("home.html")
+    return "THIS IS APP.PY VERSION 1"
 
 @app.route("/pdf-merge")
 def pdf_merge_page():
@@ -130,13 +133,20 @@ def contact():
     email = request.form["email"]
     message = request.form["message"]
 
-    print("New Contact Request")
-    print("Name:", name)
-    print("Email:", email)
-    print("Message:", message)
+    discord_message = {
+        "content":
+        f"📩 **New Tool Request**\n\n"
+        f"**Name:** {name}\n"
+        f"**Email:** {email}\n\n"
+        f"**Message:**\n{message}"
+    }
+
+    requests.post(
+        DISCORD_WEBHOOK_URL,
+        json=discord_message
+    )
 
     return "Request received successfully!"
-
 
 if __name__ == "__main__":
     import os
