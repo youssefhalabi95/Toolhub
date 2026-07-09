@@ -6,10 +6,9 @@ from tkinter import filedialog, messagebox
 from io import BytesIO
 from zipfile import ZipFile
 import requests
+from PIL import Image
 
 app = Flask(__name__)
-
-DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1517342330967949353/kzoWHEp87BwFnGv1XO0HmmaSLHtKf4oI7Nu1-dqE0ZCG2J_FYI2qiDXtZ82ZwxeUQQiF"
 
 UPLOAD_FOLDER = "uploads"
 OUTPUT_FOLDER = "outputs"
@@ -126,9 +125,85 @@ def rename_files():
     )
 
 
+@app.route("/image-compressor")
+def compress_images_page():
+
+    return render_template("Image-Compressor.html")
+
+@app.route("/image-compressor-tool", methods=["POST"])
+def compress_images():
+
+    uploaded_files = request.files.getlist("files")
+
+    if not uploaded_files:
+        return "No files uploaded."
+
+    # Optional: let the user control compression level via a form field
+    # Falls back to 70 if not provided
+    quality = request.form.get("quality", 70, type=int)
+
+    zip_buffer = BytesIO()
+
+    with ZipFile(zip_buffer, "w") as zip_file:
+
+        counter = 1
+
+        for file in uploaded_files:
+
+            # Skip empty selections
+            if file.filename == "":
+                continue
+
+            # Get original name and extension
+            filename, extension = os.path.splitext(file.filename)
+            extension = extension.lower()
+
+            try:
+                image = Image.open(file.stream)
+            except Exception:
+                # Skip files that aren't valid images
+                continue
+
+            output_buffer = BytesIO()
+
+            # JPEG/JPG needs RGB mode (no alpha channel)
+            if extension in [".jpg", ".jpeg"]:
+                if image.mode in ("RGBA", "P"):
+                    image = image.convert("RGB")
+                image.save(output_buffer, format="JPEG", quality=quality, optimize=True)
+                new_name = f"{filename}_compressed.jpg"
+
+            elif extension == ".png":
+                image.save(output_buffer, format="PNG", optimize=True)
+                new_name = f"{filename}_compressed.png"
+
+            elif extension == ".webp":
+                image.save(output_buffer, format="WEBP", quality=quality)
+                new_name = f"{filename}_compressed.webp"
+
+            else:
+                # Unsupported format - skip
+                continue
+
+            output_buffer.seek(0)
+            zip_file.writestr(new_name, output_buffer.read())
+
+            counter += 1
+
+    zip_buffer.seek(0)
+
+    return send_file(
+        zip_buffer,
+        as_attachment=True,
+        download_name="compressed_images.zip",
+        mimetype="application/zip"
+    )
+
 @app.route("/contact", methods=["POST"])
 def contact():
 
+    DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1517342330967949353/kzoWHEp87BwFnGv1XO0HmmaSLHtKf4oI7Nu1-dqE0ZCG2J_FYI2qiDXtZ82ZwxeUQQiF"
+    
     name = request.form["name"]
     email = request.form["email"]
     message = request.form["message"]
@@ -158,5 +233,6 @@ if __name__ == "__main__":
 
     app.run(
         host="0.0.0.0",
-        port=port
+        port=port,
+        debug=True
     )

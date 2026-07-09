@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Image Compressor Pro</title>
+
+    <style>
+
+        body {
+            font-family: Arial;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            width: 60%;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .upload-box {
+            border: 2px dashed #999;
+            padding: 30px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            background: #fafafa;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #eeeeee;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+        }
+
+        .buttons button {
+            margin-left: 5px;
+        }
+
+        .quality-box {
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .quality-box label {
+            font-weight: bold;
+        }
+
+        .quality-box input[type="range"] {
+            width: 100%;
+        }
+
+        .compress-btn {
+            margin-top: 20px;
+            padding: 12px 25px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background-color: #2d6cdf;
+            color: white;
+        }
+
+    </style>
+
+<!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RP580F1963"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-RP580F1963');
+    </script>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🖼️ Image Compressor Pro</h1>
+
+        <p>Select your images and choose a compression quality.</p>
+
+        <form
+            id="imageForm"
+            action="/image-compressor-tool"
+            method="POST"
+            enctype="multipart/form-data"
+        >
+
+            <div class="upload-box">
+
+                <input
+                    type="file"
+                    id="imageInput"
+                    accept=".jpg,.jpeg,.png,.webp"
+                    multiple
+                >
+
+            </div>
+
+            <div id="fileList"></div>
+
+            <div class="quality-box">
+
+                <label for="qualityRange">
+                    Compression Quality: <span id="qualityValue">70</span>
+                </label>
+
+                <input
+                    type="range"
+                    id="qualityRange"
+                    name="quality"
+                    min="10"
+                    max="100"
+                    value="70"
+                >
+
+            </div>
+
+            <button
+                type="submit"
+                class="compress-btn"
+            >
+                Compress Images
+            </button>
+
+        </form>
+
+    </div>
+
+    <script>
+
+        const imageInput = document.getElementById("imageInput");
+        const fileList = document.getElementById("fileList");
+        const form = document.getElementById("imageForm");
+        const qualityRange = document.getElementById("qualityRange");
+        const qualityValue = document.getElementById("qualityValue");
+
+        let filesArray = [];
+
+        // -----------------------------
+        // QUALITY SLIDER DISPLAY
+        // -----------------------------
+
+        qualityRange.addEventListener("input", () => {
+
+            qualityValue.textContent = qualityRange.value;
+
+        });
+
+        // -----------------------------
+        // FILE SELECTION
+        // -----------------------------
+
+        imageInput.addEventListener("change", (event) => {
+
+            filesArray = Array.from(event.target.files);
+
+            renderFiles();
+
+        });
+
+        // -----------------------------
+        // RENDER FILES
+        // -----------------------------
+
+        function renderFiles() {
+
+            fileList.innerHTML = "";
+
+            filesArray.forEach((file, index) => {
+
+                const div = document.createElement("div");
+
+                div.className = "file-item";
+
+                div.innerHTML = `
+                    <span>${file.name}</span>
+
+                    <div class="buttons">
+
+                        <button type="button"
+                            onclick="removeFile(${index})">
+                            Remove
+                        </button>
+
+                    </div>
+                `;
+
+                fileList.appendChild(div);
+
+            });
+
+        }
+
+        // -----------------------------
+        // REMOVE FILE
+        // -----------------------------
+
+        function removeFile(index) {
+
+            filesArray.splice(index, 1);
+
+            renderFiles();
+
+        }
+
+        // -----------------------------
+        // SUBMIT FORM
+        // -----------------------------
+
+        form.addEventListener("submit", (event) => {
+
+            event.preventDefault();
+
+            const formData = new FormData();
+
+            filesArray.forEach((file) => {
+
+                formData.append("files", file);
+
+            });
+
+            formData.append("quality", qualityRange.value);
+
+            fetch("/image-compressor-tool", {
+
+                method: "POST",
+                body: formData
+
+            })
+            .then(response => response.blob())
+            .then(blob => {
+
+                const url = window.URL.createObjectURL(blob);
+
+                const a = document.createElement("a");
+
+                a.href = url;
+                a.download = "compressed_images.zip";
+
+                document.body.appendChild(a);
+
+                a.click();
+
+                a.remove();
+
+            });
+
+        });
+
+    </script>
+
+</body>
+
+</html>
